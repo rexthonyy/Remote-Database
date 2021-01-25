@@ -14,11 +14,9 @@ if(isset($_GET['apiKey']) && isset($_GET['postId'])){
 	$apiKey = $_GET['apiKey'];
 	$postId = $_GET['postId'];
 
-	
-
 //convert apikey to user id
 	$properties['columns'] = Column::ID;
-	$properties['condition'] = "WHERE api_key=$apiKey";
+	$properties['condition'] = "WHERE api_key='$apiKey'";
 	$properties['orderBy'] = "";
 	$properties['limit'] = "";
 	$database = new Database(DB::INFO, DB::USER, DB::PASS);
@@ -33,39 +31,34 @@ if(isset($_GET['apiKey']) && isset($_GET['postId'])){
 	}else{
 		$userId = $row[0][Column::ID];
 
-		$properties['columns'] = Column::ID.",".Column::ORDER_IN_CATEGORY.",".Column::KEY.",".Column::VALUE;
-		$properties['condition'] = "WHERE user_id = $userId AND post_id = $postId";
+		$properties['columns'] = Column::ID.",".Column::TITLE.",".Column::DESCRIPTION.",".Column::METADATA;
+		$properties['condition'] = "WHERE id = $postId AND user_id = $userId";
 		$properties['orderBy'] = "";
 		$properties['limit'] = "";
 		$database = new Database(DB::INFO, DB::USER, DB::PASS);
-		$dbTable = new DbTable($database, Table::DATA_TB); 
+		$dbTable = new DbTable($database, Table::POSTS_TB); 
 		$dbTableQuery = new DbTableQuery($properties);
 		$dbTableOperator = new DbTableOperator();
 		$row = $dbTableOperator->read($dbTable, $dbTableQuery, new DbPrepareResult());
 
 		if($row == null){
 			$response['status'] = "failed";
-			$response['message'] = "No data";
-		}else{
-			$dataList = [];
-			foreach($row as $data){
-				$result = [];
-
-				$result['data_id'] = $data[Column::ID];
-				$result['order_in_category'] = $data[Column::ORDER_IN_CATEGORY];
-				$result['key'] = $data[Column::KEY];
-				$result['value'] = $data[Column::VALUE];
-
-				$dataList[] = $result;
-			}
+			$response['message'] = "Not found";
+		}else{			
+			$result = [];
+			$result['post_id'] = $row[0][Column::ID];
+			$result['title'] = $row[0][Column::TITLE];
+			$result['description'] = $row[0][Column::DESCRIPTION];
+			$result['metadata'] = $row[0][Column::METADATA];
 
 			$response['status'] = "success";
-			$response['data'] = $dataList;
+			$response['data'] = $result;
 		}
 	}
 }else{
 	$response['status'] = "failed";
 	$response['message'] = "Invalid input";
 }
+
 echo json_encode($response);
 ?>

@@ -109,7 +109,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 <body>
 	<div class="rex-border-bottom-gray rex-height-50px">
 		<div class="custom-responsive-container rex-line-height-50px rex-fs-normal">
-			<a href="projects.php"><span class="rex-center-relative-div-vertical rex-hover">App name</span></a>
+			<a href="projects.php"><span class="rex-hover"><?php echo getAppName(); ?></span></a>
 		</div>
 	</div>
 	<div class="rex-border-bottom-gray rex-height-50px">

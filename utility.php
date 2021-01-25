@@ -50,4 +50,8 @@
 			return $row[0]['max'];
 		}
 	}
+
+	function getAppName(){
+		return "Central Database";//Remote Data Manager
+	}
 ?>

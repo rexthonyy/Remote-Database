@@ -4,11 +4,11 @@
 	//check whether the session is set
 	function checkSession(){
 		if(!isset($_SESSION['session_id'])){
-			echo "session not set";
+			//echo "session not set";
 			if(!isset($_COOKIE['session_id'])){
 				header('Location:index.php');
 			}else{
-				echo "setting the session";
+				//echo "setting the session";
 				$_SESSION['session_id'] = $_COOKIE['session_id'];
 			}
 		}

@@ -35,7 +35,7 @@ if(isset($_GET['apiKey']) && isset($_GET['postId'])){
 
 		$properties['columns'] = Column::ID.",".Column::ORDER_IN_CATEGORY.",".Column::KEY.",".Column::VALUE;
 		$properties['condition'] = "WHERE user_id = $userId AND post_id = $postId";
-		$properties['orderBy'] = "";
+		$properties['orderBy'] = "ORDER BY ".Column::ORDER_IN_CATEGORY." ASC";
 		$properties['limit'] = "";
 		$database = new Database(DB::INFO, DB::USER, DB::PASS);
 		$dbTable = new DbTable($database, Table::DATA_TB); 

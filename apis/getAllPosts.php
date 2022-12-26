@@ -31,7 +31,7 @@ if(isset($_GET['apiKey']) && isset($_GET['projectId'])){
 	}else{
 		$userId = $row[0][Column::ID];
 
-		$properties['columns'] = Column::ID.",".Column::TITLE.",".Column::DESCRIPTION.",".Column::METADATA;
+		$properties['columns'] = Column::ID.",".Column::TITLE.",".Column::SLUG.",".Column::DESCRIPTION.",".Column::METADATA;
 		$properties['condition'] = "WHERE user_id = $userId AND project_id = $projectId";
 		$properties['orderBy'] = "";
 		$properties['limit'] = "";
@@ -52,6 +52,7 @@ if(isset($_GET['apiKey']) && isset($_GET['projectId'])){
 
 				$result['post_id'] = $post[Column::ID];
 				$result['title'] = $post[Column::TITLE];
+				$result['slug'] = $post[Column::SLUG];
 				$result['description'] = $post[Column::DESCRIPTION];
 				$result['metadata'] = $post[Column::METADATA];
 

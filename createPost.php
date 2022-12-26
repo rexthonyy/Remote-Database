@@ -21,12 +21,13 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 	$values[] = $userId;
 	$values[] = $projectId;
 	$values[] = $_POST['title'];
+	$values[] = getUniqueSlug(slugify($_POST['title']));
 	$values[] = $_POST['description'];
 	$values[] = $_POST['metadata'];
 
-	$properties['columns'] = "(".Column::USER_ID.", ".Column::PROJECT_ID.", ".Column::TITLE.", ".Column::DESCRIPTION.", ".Column::METADATA.")";
+	$properties['columns'] = "(".Column::USER_ID.", ".Column::PROJECT_ID.", ".Column::TITLE.", ".Column::SLUG.", ".Column::DESCRIPTION.", ".Column::METADATA.")";
 	$properties['values'] = $values;
-	$properties['tokens'] = "(?, ?, ?, ?, ?)";
+	$properties['tokens'] = "(?, ?, ?, ?, ?, ?)";
 	
 	$database = new Database(DB::INFO, DB::USER, DB::PASS);
 	$dbTable = new DbTable($database, Table::POSTS_TB); 
@@ -37,6 +38,35 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 	header('Location:posts.php?project_id='.$projectId);
 }else{
 	$projectId = $_GET['project_id'];
+}
+
+function slugify($postTitle){
+	return preg_replace('/[^a-z0-9]+/i', '-', trim(strtolower($postTitle)));
+}
+
+function getUniqueSlug($slug){
+	$properties['columns'] = Column::SLUG;
+	$properties['condition'] = "WHERE slug LIKE '$slug%'";
+	$properties['orderBy'] = "";
+	$properties['limit'] = "";
+	$database = new Database(DB::INFO, DB::USER, DB::PASS);
+	$dbTable = new DbTable($database, Table::POSTS_TB); 
+	$dbTableQuery = new DbTableQuery($properties);
+	$dbTableOperator = new DbTableOperator();
+	$row = $dbTableOperator->read($dbTable, $dbTableQuery, new DbPrepareResult());
+	
+	if($row != null){
+		foreach($row as $post){
+			$slugList[] = $post[Column::SLUG];
+		}
+		if(in_array($slug, $slugList)){
+			$count = 0;
+			while(in_array(($slug.'-'.++$count), $slugList));
+			$slug = $slug.'-'.$count;
+		}
+	}
+	
+	return $slug;
 }
 ?>
 

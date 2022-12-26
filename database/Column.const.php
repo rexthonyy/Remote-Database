@@ -20,6 +20,7 @@
 		//posts_tb
 		const PROJECT_ID = "project_id";
 		//const TITLE = "title";
+		const SLUG = "slug";
 		//const DESCRIPTION = "description";
 		const METADATA = "metadata";
 

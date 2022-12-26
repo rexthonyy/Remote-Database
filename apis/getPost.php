@@ -2,7 +2,7 @@
 
 $response = array();
 
-if(isset($_GET['apiKey']) && isset($_GET['postId'])){
+if(isset($_GET['apiKey']) && isset($_GET['slug'])){
 	include_once "../database/DB.const.php";
 	include_once "../database/Table.const.php";
 	include_once "../database/Column.const.php";
@@ -12,7 +12,7 @@ if(isset($_GET['apiKey']) && isset($_GET['postId'])){
 	include_once "../database/DbTableOperator.cls.php";
 
 	$apiKey = $_GET['apiKey'];
-	$postId = $_GET['postId'];
+	$slug = $_GET['slug'];
 
 //convert apikey to user id
 	$properties['columns'] = Column::ID;
@@ -31,8 +31,8 @@ if(isset($_GET['apiKey']) && isset($_GET['postId'])){
 	}else{
 		$userId = $row[0][Column::ID];
 
-		$properties['columns'] = Column::ID.",".Column::TITLE.",".Column::DESCRIPTION.",".Column::METADATA;
-		$properties['condition'] = "WHERE id = $postId AND user_id = $userId";
+		$properties['columns'] = Column::ID.",".Column::TITLE.",".Column::SLUG.",".Column::DESCRIPTION.",".Column::METADATA;
+		$properties['condition'] = "WHERE slug = '$slug' AND user_id = $userId";
 		$properties['orderBy'] = "";
 		$properties['limit'] = "";
 		$database = new Database(DB::INFO, DB::USER, DB::PASS);
@@ -48,6 +48,7 @@ if(isset($_GET['apiKey']) && isset($_GET['postId'])){
 			$result = [];
 			$result['post_id'] = $row[0][Column::ID];
 			$result['title'] = $row[0][Column::TITLE];
+			$result['slug'] = $row[0][Column::SLUG];
 			$result['description'] = $row[0][Column::DESCRIPTION];
 			$result['metadata'] = $row[0][Column::METADATA];
 

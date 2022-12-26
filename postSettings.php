@@ -26,11 +26,13 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 	if(isset($_POST['update'])){
 
 		$title = $_POST['title'];
+		$slug = getUniqueSlug($postId, slugify($_POST['title']));
 		$description = $_POST['description'];
 		$metadata = $_POST['metadata'];
 
-		$equality = Column::TITLE."=?, ".Column::DESCRIPTION."=?, ".Column::METADATA."=?";
+		$equality = Column::TITLE."=?, ".Column::SLUG."=?, ".Column::DESCRIPTION."=?, ".Column::METADATA."=?";
 		$values[] = $title;
+		$values[] = $slug;
 		$values[] = $description;
 		$values[] = $metadata;
 
@@ -108,6 +110,35 @@ if($row == null){
 	$postTitle = $row[0][Column::TITLE];
 	$postDescription = $row[0][Column::DESCRIPTION];
 	$postMetaData = $row[0][Column::METADATA];
+}
+
+function slugify($postTitle){
+	return preg_replace('/[^a-z0-9]+/i', '-', trim(strtolower($postTitle)));
+}
+
+function getUniqueSlug($postId, $slug){
+	$properties['columns'] = Column::SLUG;
+	$properties['condition'] = "WHERE slug LIKE '$slug%' AND id <> $postId";
+	$properties['orderBy'] = "";
+	$properties['limit'] = "";
+	$database = new Database(DB::INFO, DB::USER, DB::PASS);
+	$dbTable = new DbTable($database, Table::POSTS_TB); 
+	$dbTableQuery = new DbTableQuery($properties);
+	$dbTableOperator = new DbTableOperator();
+	$row = $dbTableOperator->read($dbTable, $dbTableQuery, new DbPrepareResult());
+	
+	if($row != null){
+		foreach($row as $post){
+			$slugList[] = $post[Column::SLUG];
+		}
+		if(in_array($slug, $slugList)){
+			$count = 0;
+			while(in_array(($slug.'-'.++$count), $slugList));
+			$slug = $slug.'-'.$count;
+		}
+	}
+	
+	return $slug;
 }
 ?>
 
